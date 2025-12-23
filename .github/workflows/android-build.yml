@@ -1,4 +1,4 @@
-name: Android Build from ZIP (Clean Final)
+name: Android Build from ZIP (Final Correct)
 
 on:
   push:
@@ -21,8 +21,8 @@ jobs:
 
       - name: Extract Android project ZIP
         run: |
-          unzip anifh-main/anifh.zip
-          rm -f anifh-main/anifh.zip
+          unzip anifh.zip
+          rm -f anifh.zip
 
       - name: Grant Gradle permission
         run: chmod +x gradlew
