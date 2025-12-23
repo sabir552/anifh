@@ -1,4 +1,4 @@
-name: Android Build from ZIP (Final)
+name: Android Build from ZIP (Clean Final)
 
 on:
   push:
@@ -21,13 +21,8 @@ jobs:
 
       - name: Extract Android project ZIP
         run: |
-          unzip anifh.zip
-          rm -f anifh.zip
-
-      - name: Copy GPSTrack.java into Android source
-        run: |
-          mkdir -p app/src/main/java/anifh/app/webview
-          cp GPSTrack.java app/src/main/java/anifh/app/webview/GPSTrack.java
+          unzip anifh-main/anifh.zip
+          rm -f anifh-main/anifh.zip
 
       - name: Grant Gradle permission
         run: chmod +x gradlew
