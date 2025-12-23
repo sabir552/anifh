@@ -1,4 +1,4 @@
-name: Android Build from ZIP (FINAL)
+name: Android Build from ZIP (ABSOLUTE FINAL)
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
           unzip anifh.zip
 
       - name: Build Debug APK
-        working-directory: anifh
+        working-directory: anifh/anifh
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: anifh/app/build/outputs/apk/debug/*.apk
+          path: anifh/anifh/app/build/outputs/apk/debug/*.apk
