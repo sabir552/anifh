@@ -1,4 +1,4 @@
-name: Android Build from ZIP (Final Correct)
+name: Android Build from ZIP (FINAL WORKING)
 
 on:
   push:
@@ -22,16 +22,15 @@ jobs:
       - name: Extract Android project ZIP
         run: |
           unzip anifh.zip
-          rm -f anifh.zip
 
-      - name: Grant Gradle permission
-        run: chmod +x gradlew
-
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build APK
+        working-directory: anifh
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: anifh/app/build/outputs/apk/debug/*.apk
