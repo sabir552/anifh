@@ -1,34 +1,95 @@
-name: Build Android App from ZIP
+- name: Add missing GPSTrack.java
+  run: |
+    mkdir -p app/src/main/java/anifh/app/webview
+    cat << 'EOF' > app/src/main/java/anifh/app/webview/GPSTrack.java
+    package anifh.app.webview;
 
-on:
-  push:
-    branches: [ main ]
+    import android.Manifest;
+    import android.app.Service;
+    import android.content.Context;
+    import android.content.Intent;
+    import android.content.pm.PackageManager;
+    import android.location.Location;
+    import android.location.LocationListener;
+    import android.location.LocationManager;
+    import android.os.Bundle;
+    import android.os.IBinder;
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    import androidx.core.app.ActivityCompat;
 
-    steps:
-      - uses: actions/checkout@v4
+    public class GPSTrack extends Service implements LocationListener {
 
-      - name: Extract ZIP
-        run: |
-          unzip anifh.zip
-          mv anifh/* .
-          rm -rf anifh anifh.zip
+        private final Context mContext;
+        private Location location;
+        private boolean canGetLocation = false;
+        private double latitude;
+        private double longitude;
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+        public GPSTrack(Context context) {
+            this.mContext = context;
+            getLocation();
+        }
 
-      - name: Grant execute permission
-        run: chmod +x gradlew
+        private void getLocation() {
+            try {
+                LocationManager locationManager =
+                        (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
-      - name: Build APK
-        run: ./gradlew assembleDebug
+                if (locationManager == null) return;
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+                boolean isGPSEnabled =
+                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+                if (isGPSEnabled) {
+                    canGetLocation = true;
+
+                    if (ActivityCompat.checkSelfPermission(
+                            mContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            1000,
+                            1,
+                            this
+                    );
+
+                    location = locationManager.getLastKnownLocation(
+                            LocationManager.GPS_PROVIDER
+                    );
+
+                    if (location != null) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public boolean canGetLocation() {
+            return canGetLocation;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        @Override public void onLocationChanged(Location location) {}
+        @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
+        @Override public void onProviderEnabled(String provider) {}
+        @Override public void onProviderDisabled(String provider) {}
+
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+    }
+    EOF
