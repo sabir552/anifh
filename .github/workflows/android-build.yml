@@ -1,4 +1,4 @@
-name: Android Build from ZIP (FINAL WORKING)
+name: Android Build from ZIP (FINAL)
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         run: |
           unzip anifh.zip
 
-      - name: Build APK
+      - name: Build Debug APK
         working-directory: anifh
         run: |
           chmod +x gradlew
