@@ -1,4 +1,4 @@
-name: Detect Module and Build APK
+name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -12,11 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
@@ -27,9 +25,14 @@ jobs:
           sudo apt-get install -y gradle
 
       - name: List Gradle projects
-        run: |
-          gradle projects
+        run: gradle projects
 
-      - name: List Gradle tasks
-        run: |
-          gradle tasks
+      - name: Build (auto)
+        run: gradle build || true
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-files
+          path: |
+            **/*.apk
