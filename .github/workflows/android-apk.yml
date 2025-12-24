@@ -1,11 +1,11 @@
-name: Build Android APK (Final)
+name: Build Android APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
       - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,36 +21,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Install Gradle
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
 
-      - name: Show project structure
-        run: |
-          echo "==== ROOT FILES ===="
-          ls
-          echo "==== FIND settings.gradle ===="
-          find . -name "settings.gradle*"
-          echo "==== FIND build.gradle ===="
-          find . -name "build.gradle*"
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
-      - name: Try to build Android project
-        run: |
-          set -e
-          if find . -name "settings.gradle*" | grep -q .; then
-            PROJECT_DIR=$(dirname "$(find . -name "settings.gradle*" | head -n 1)")
-            echo "Android project found in: $PROJECT_DIR"
-            cd "$PROJECT_DIR"
-            gradle assembleDebug || gradle build
-          else
-            echo "❌ No Android Gradle project found"
-            exit 1
-          fi
-
-      - name: Upload APK Artifact (if exists)
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk-files
-          path: |
-            **/build/outputs/apk/**/*.apk
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
