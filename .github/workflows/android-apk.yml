@@ -1,4 +1,4 @@
-name: Build Android APK (Final Guaranteed)
+name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -21,23 +21,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Find gradlew
-        run: |
-          echo "Searching for gradlew..."
-          GRADLEW_PATH=$(find . -type f -name gradlew | head -n 1)
-
-          if [ -z "$GRADLEW_PATH" ]; then
-            echo "❌ gradlew not found anywhere in repo"
-            exit 1
-          fi
-
-          echo "✅ gradlew found at: $GRADLEW_PATH"
-          echo "GRADLEW_PATH=$GRADLEW_PATH" >> $GITHUB_ENV
-          echo "GRADLE_DIR=$(dirname "$GRADLEW_PATH")" >> $GITHUB_ENV
-
+      # 👇 EXACT path based on your ZIP
       - name: Build Debug APK
+        working-directory: anifh/anifh
         run: |
-          cd "$GRADLE_DIR"
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -45,5 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: |
-            **/build/outputs/apk/debug/*.apk
+          path: anifh/anifh/app/build/outputs/apk/debug/*.apk
