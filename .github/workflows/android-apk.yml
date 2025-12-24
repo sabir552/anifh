@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK from ZIP
 
 on:
   workflow_dispatch:
@@ -21,17 +21,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 🔍 PROOF STEP (ek dafa ke liye)
-      - name: Show directory structure
+      - name: Unzip project
         run: |
-          echo "ROOT:"
+          unzip anifh.zip
+          echo "After unzip:"
           ls -la
-          echo "FIRST anifh:"
-          ls -la anifh
-          echo "SECOND anifh:"
-          ls -la anifh/anifh
+          ls -la anifh || true
+          ls -la anifh/anifh || true
 
-      # ✅ ACTUAL BUILD STEP (CORRECT PATH)
       - name: Build Debug APK
         working-directory: anifh/anifh
         run: |
