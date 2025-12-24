@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (Auto Detect)
 
 on:
   push:
@@ -21,14 +21,27 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
+      - name: Find gradlew and build APK
+        run: |
+          echo "🔍 Searching for gradlew..."
+          GRADLEW_PATH=$(find . -name gradlew | head -n 1)
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+          if [ -z "$GRADLEW_PATH" ]; then
+            echo "❌ gradlew not found"
+            exit 1
+          fi
+
+          echo "✅ gradlew found at $GRADLEW_PATH"
+
+          GRADLE_DIR=$(dirname "$GRADLEW_PATH")
+          cd "$GRADLE_DIR"
+
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: debug-apk
+          path: |
+            **/app/build/outputs/apk/debug/*.apk
