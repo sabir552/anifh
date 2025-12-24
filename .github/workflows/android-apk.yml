@@ -21,23 +21,20 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 🔍 DEBUG: show folder structure (VERY IMPORTANT)
-      - name: Show root structure
+      # 🔍 DEBUG: confirm where we are
+      - name: Show root files
         run: |
-          echo "=== ROOT ==="
+          pwd
           ls -la
-          echo "=== anifh folder ==="
-          ls -la anifh || true
 
-      # ✅ Build from correct directory
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Build Debug APK
-        working-directory: anifh
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: anifh/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
