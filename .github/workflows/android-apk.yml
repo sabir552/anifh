@@ -21,16 +21,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 👇 VERY IMPORTANT: enter the android project folder
+      - name: Grant permission to gradlew
+        run: chmod +x gradlew
+
       - name: Build Debug APK
-        run: |
-          cd anifh
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: |
-            anifh/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
