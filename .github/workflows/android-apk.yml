@@ -1,4 +1,4 @@
-name: Build Android APK from ZIP
+name: Build Android APK from ZIP (FINAL)
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -21,22 +21,22 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Unzip project
+      - name: Unzip Android project
         run: |
           unzip anifh.zip
-          echo "After unzip:"
+          echo "=== ROOT ==="
           ls -la
-          ls -la anifh || true
-          ls -la anifh/anifh || true
+          echo "=== PROJECT FOLDER ==="
+          ls -la anifh
 
       - name: Build Debug APK
-        working-directory: anifh/anifh
+        working-directory: anifh
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: anifh/anifh/app/build/outputs/apk/debug/*.apk
+          path: anifh/app/build/outputs/apk/debug/*.apk
