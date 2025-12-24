@@ -21,18 +21,16 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Install Gradle
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
-
+      # 👇 VERY IMPORTANT: enter the android project folder
       - name: Build Debug APK
         run: |
-          gradle assembleDebug
+          cd anifh
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: |
-            **/build/outputs/apk/debug/*.apk
+            anifh/app/build/outputs/apk/debug/*.apk
