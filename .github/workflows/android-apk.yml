@@ -22,8 +22,7 @@ jobs:
           java-version: 17
 
       - name: Build Debug APK
-        working-directory: android anifh
-        run: |
+        working-directory: anifh/anifh
           chmod +x gradlew
           ./gradlew assembleDebug
 
