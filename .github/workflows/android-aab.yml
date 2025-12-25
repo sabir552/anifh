@@ -9,27 +9,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: anifh/anifh
+
     steps:
-      # 1️⃣ Repo checkout
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Java setup (Android ke liye best)
+      # 2️⃣ Setup Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3️⃣ Android SDK setup
+      # 3️⃣ Setup Android SDK
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # 4️⃣ Gradle permission
+      # 4️⃣ Grant gradlew permission ✅ (NOW IT WILL WORK)
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 5️⃣ (Optional but recommended) Clean
+      # 5️⃣ Clean
       - name: Gradle clean
         run: ./gradlew clean
 
@@ -37,9 +41,9 @@ jobs:
       - name: Build Release AAB
         run: ./gradlew :app:bundleRelease
 
-      # 7️⃣ Upload AAB as Artifact (DOWNLOAD YAHAN SE HOGI)
+      # 7️⃣ Upload AAB Artifact
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          path: anifh/anifh/app/build/outputs/bundle/release/app-release.aab
