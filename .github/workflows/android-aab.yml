@@ -1,48 +1,45 @@
-name: Build Signed AAB for Play Store
+name: Build Android AAB
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Repo checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      # 2️⃣ Java setup (Android ke liye best)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Unzip Android project
-        run: |
-          unzip anifh.zip
-          ls -la
-          ls -la anifh
+      # 3️⃣ Android SDK setup
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Restore keystore from secret
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > anifh/anifh-release.jks
+      # 4️⃣ Gradle permission
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Build signed AAB
-        working-directory: anifh
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          chmod +x gradlew
-          ./gradlew bundleRelease
+      # 5️⃣ (Optional but recommended) Clean
+      - name: Gradle clean
+        run: ./gradlew clean
 
-      - name: Upload AAB artifact
+      # 6️⃣ Build Release AAB
+      - name: Build Release AAB
+        run: ./gradlew :app:bundleRelease
+
+      # 7️⃣ Upload AAB as Artifact (DOWNLOAD YAHAN SE HOGI)
+      - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
-          path: anifh/app/build/outputs/bundle/release/*.aab
+          path: app/build/outputs/bundle/release/app-release.aab
