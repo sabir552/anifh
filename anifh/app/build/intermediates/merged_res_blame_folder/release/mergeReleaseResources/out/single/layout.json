@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "anifh.app.webview.app-mergeReleaseResources-47:/layout/activity_main.xml",
+        "source": "anifh.app.webview.app-main-49:/layout/activity_main.xml"
+    },
+    {
+        "merged": "anifh.app.webview.app-mergeReleaseResources-47:/layout/activity_splash.xml",
+        "source": "anifh.app.webview.app-main-49:/layout/activity_splash.xml"
+    }
+]
